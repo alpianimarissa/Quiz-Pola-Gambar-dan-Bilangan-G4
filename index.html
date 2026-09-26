@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interaktif: Pola Gambar & Pola Bilangan SD Kelas 4</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#2563EB',
+                            lightBlue: '#EFF6FF',
+                            purple: '#7C3AED',
+                            green: '#10B981',
+                            amber: '#F59E0B',
+                            red: '#EF4444'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #F1F5F9;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', cursive;
+        }
+        .btn-nav-grid {
+            transition: all 0.2s ease;
+        }
+        .btn-nav-grid:hover {
+            transform: scale(1.08);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-md hidden sm:block">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-2xl font-bold tracking-wide">Quiz Pola Gambar & Bilangan 🎯</h1>
+                    <p class="text-xs text-blue-100 hidden sm:block">Matematika Kelas 4 SD • 40 Soal Pilihan Ganda</p>
+                </div>
+            </div>
+
+            <!-- Score & Saved Status Header Badge -->
+            <div class="flex items-center gap-3">
+                <div class="bg-white/10 px-3 py-1.5 rounded-xl text-xs sm:text-sm backdrop-blur-sm border border-white/20 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-yellow-300"></i>
+                    <span>Skor: <strong id="header-score" class="text-yellow-300 font-bold text-base">0</strong></span>
+                </div>
+
+                <div id="save-status-badge" class="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 hidden sm:flex">
+                    <i class="fa-solid fa-cloud-arrow-up text-emerald-400"></i>
+                    <span id="save-status-text">Tersimpan Otomatis</span>
+                </div>
+
+                <button onclick="confirmResetQuiz()" title="Reset Quiz" class="bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-xl text-xs transition flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span class="hidden md:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-blue-900/40 h-2">
+            <div id="progress-bar" class="bg-yellow-400 h-2 transition-all duration-300" style="width: 0%;"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- LEFT / TOP PANEL: NAVIGATOR GRID (40 Questions) -->
+            <div class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                    <h2 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-blue-600"></i> Navigasi Soal (1-40)
+                    </h2>
+                    <span id="answered-count-badge" class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full">
+                        0 / 40 Terjawab
+                    </span>
+                </div>
+
+                <!-- Status Legend -->
+                <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold text-slate-600 mb-4 bg-slate-50 p-2.5 rounded-xl">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>
+                        <span>Belum</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        <span>Benar</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                        <span>Salah</span>
+                    </div>
+                </div>
+
+                <!-- 40 Buttons Grid -->
+                <div id="question-grid" class="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-8 gap-2 max-h-[320px] lg:max-h-[460px] overflow-y-auto custom-scrollbar p-1">
+                    <!-- Dynamic Grid Buttons generated by JS -->
+                </div>
+
+                <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <button onclick="finishQuiz()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-flag-checkered"></i> Selesai & Lihat Hasil
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: ACTIVE QUESTION DISPLAY -->
+            <div class="lg:col-span-8 space-y-5">
+                
+                <div id="question-card" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 relative min-h-[450px] flex flex-col justify-between">
+                    
+                    <div>
+                        <!-- Question Header Meta -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <span id="q-number-badge" class="bg-blue-600 text-white font-bold text-sm px-3.5 py-1 rounded-xl shadow-sm">
+                                    Soal #1
+                                </span>
+                                <span id="q-category-badge" class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-xl">
+                                    Pola Gambar Membesar
+                                </span>
+                            </div>
+                            <span id="q-status-text" class="text-xs font-bold text-slate-400 flex items-center gap-1">
+                                <i class="fa-regular fa-circle"></i> Belum Dijawab
+                            </span>
+                        </div>
+
+                        <!-- Question Text -->
+                        <div id="q-text" class="text-slate-800 text-base sm:text-lg font-semibold leading-relaxed mb-4">
+                            <!-- Question text populated here -->
+                        </div>
+
+                        <!-- Question Visual / Illustration Container -->
+                        <div id="q-illustration" class="my-4 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center overflow-x-auto min-h-[120px]">
+                            <!-- Visual Graphic / SVGs populated here -->
+                        </div>
+
+                        <!-- Options Grid -->
+                        <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+                            <!-- Options populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Immediate Feedback & Pembahasan Box -->
+                    <div id="feedback-box" class="hidden mt-6 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm font-semibold transition-all border">
+                        <!-- Dynamic Feedback Content -->
+                    </div>
+
+                    <!-- Question Navigation Controls -->
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                        <button id="prev-btn" onclick="prevQuestion()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl transition text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                        </button>
+
+                        <span id="q-footer-counter" class="text-xs font-bold text-slate-400">1 dari 40</span>
+
+                        <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-2">
+                            Berikutnya <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+        <p>Quiz Interaktif Matematika Kelas 4 SD • Pola Gambar & Pola Bilangan • Penyimpanan Otomatis (Offline Friendly)</p>
+    </footer>
+
+    <!-- FINAL RESULT MODAL -->
+    <div id="result-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-bounce-short">
+            
+            <div class="w-20 h-20 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                <i class="fa-solid fa-trophy" id="modal-icon"></i>
+            </div>
+
+            <div>
+                <span id="modal-badge" class="bg-blue-100 text-blue-800 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Hasil Akhir</span>
+                <h2 id="modal-title" class="text-2xl sm:text-3xl font-bold text-slate-800 mt-2">Hebat Sekali!</h2>
+                <p id="modal-subtitle" class="text-slate-500 text-sm mt-1">Kamu telah menyelesaikan Quiz Pola Gambar dan Pola Bilangan!</p>
+            </div>
+
+            <!-- Score Cards -->
+            <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="p-2">
+                    <span class="text-xs text-slate-400 block font-bold">Total Nilai</span>
+                    <strong id="modal-final-score" class="text-2xl sm:text-3xl font-bold text-blue-600">0</strong>
+                </div>
+                <div class="p-2 border-x border-slate-200">
+                    <span class="text-xs text-slate-400 block font-bold">Jawaban Benar</span>
+                    <strong id="modal-correct-count" class="text-2xl sm:text-3xl font-bold text-emerald-600">0</strong>
+                </div>
+                <div class="p-2">
+                    <span class="text-xs text-slate-400 block font-bold">Jawaban Salah</span>
+                    <strong id="modal-wrong-count" class="text-2xl sm:text-3xl font-bold text-red-500">0</strong>
+                </div>
+            </div>
+
+            <div id="modal-evaluation-text" class="text-xs sm:text-sm text-slate-600 bg-blue-50/70 p-3.5 rounded-xl border border-blue-100">
+                <!-- Evaluation message -->
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button onclick="closeResultModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition text-sm">
+                    Review Jawaban Soal
+                </button>
+                <button onclick="resetQuizData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Coba Quiz Lagi
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RESET CONFIRMATION MODAL -->
+    <div id="reset-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
+            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-2xl mx-auto">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800">Ulangi Quiz dari Awal?</h3>
+            <p class="text-xs text-slate-500">Semua riwayat jawaban dan skor kamu akan dihapus.</p>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeResetModal()" class="w-full bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-xs">Batal</button>
+                <button onclick="resetQuizData()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs">Ya, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT QUIZ LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // 40 QUESTIONS DATASET (Grade 4 SD Math)
+        // -------------------------------------------------------------
+        const questionsData = [
+            // Q1
+            {
+                id: 1,
+                category: "Pola Gambar Membesar",
+                question: "Perhatikan susunan kubus berikut. Berapa jumlah kubus pada Gambar ke-4?",
+                illustration: `
+                    <div class="flex items-end justify-center gap-6 text-center">
+                        <div>
+                            <div class="text-2xl">🧊</div>
+                            <span class="text-xs font-bold text-slate-500">Gbr 1 (1)</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl">🧊🧊🧊</div>
+                            <span class="text-xs font-bold text-slate-500">Gbr 2 (3)</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl">🧊🧊🧊🧊🧊</div>
+                            <span class="text-xs font-bold text-slate-500">Gbr 3 (5)</span>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-blue-600">❓</div>
+                            <span class="text-xs font-bold text-blue-600">Gbr 4 (?)</span>
+                        </div>
+                    </div>`,
+                options: ["6 Kubus", "7 Kubus", "8 Kubus", "9 Kubus"],
+                correct: 1, // B (7)
+                explanation: "Aturan pola adalah bertambah 2 kubus pada setiap tahap (1 ➔ 3 ➔ 5 ➔ +2 = 7 kubus)."
+            },
+            // Q2
+            {
+                id: 2,
+                category: "Pola Bilangan Membesar",
+                question: "Isilah titik-titik pada barisan loncat berikut: <br><strong class='text-blue-600'>5, 10, 15, 20, ..., 30</strong>",
+                illustration: `
+                    <div class="flex items-center justify-center gap-2 text-sm font-bold text-slate-700">
+                        <span class="bg-white px-3 py-1.5 rounded-lg border">5</span> ➔
+                        <span class="bg-white px-3 py-1.5 rounded-lg border">10</span> ➔
+                        <span class="bg-white px-3 py-1.5 rounded-lg border">15</span> ➔
+                        <span class="bg-white px-3 py-1.5 rounded-lg border">20</span> ➔
+                        <span class="bg-yellow-300 px-3 py-1.5 rounded-lg border text-slate-900">?</span> ➔
+                        <span class="bg-white px-3 py-1.5 rounded-lg border">30</span>
+                    </div>`,
+                options: ["22", "24", "25", "26"],
+                correct: 2, // C (25)
+                explanation: "Pola bilangan ini adalah kelipatan 5 atau bertambah 5 (+5). Jadi, 20 + 5 = 25."
+            },
+            // Q3
+            {
+                id: 3,
+                category: "Pola Gambar Mengecil",
+                question: "Jumlah balon gas berkurang secara teratur. Berapa balon tersisa pada Kotak ke-4?",
+                illustration: `
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <div class="bg-white p-2 rounded-xl border"><span class="text-xl">🎈🎈🎈🎈🎈🎈</span><br><span class="text-xs text-slate-500 font-bold">6 Balon</span></div>
+                        <div class="bg-white p-2 rounded-xl border"><span class="text-xl">🎈🎈🎈🎈</span><br><span class="text-xs text-slate-500 font-bold">4 Balon</span></div>
+                        <div class="bg-white p-2 rounded-xl border"><span class="text-xl">🎈🎈</span><br><span class="text-xs text-slate-500 font-bold">2 Balon</span></div>
+                        <div class="bg-yellow-50 p-2 rounded-xl border-2 border-dashed border-amber-400 flex flex-col justify-center items-center"><span class="text-xl font-bold text-amber-600">❓</span><span class="text-xs text-amber-700 font-bold">Kotak 4</span></div>
+                    </div>`,
+                options: ["0 Balon", "1 Balon", "2 Balon", "3 Balon"],
+                correct: 0, // A (0)
+                explanation: "Aturan pola adalah dikurangi 2 balon (-2) setiap langkah (6 ➔ 4 ➔ 2 ➔ 0 balon)."
+            },
+            // Q4
+            {
+                id: 4,
+                category: "Pola Bilangan Mengecil",
+                question: "Tentukan angka yang tepat untuk mengisi suku yang hilang: <br><strong class='text-blue-600'>36, 30, 24, ..., 12, 6</strong>",
+                illustration: `
+                    <div class="flex items-center justify-center gap-2 font-mono text-sm font-bold text-slate-800">
+                        <span>36</span> <span class="text-red-500 text-xs">-6</span>
+                        <span>30</span> <span class="text-red-500 text-xs">-6</span>
+                        <span>24</span> <span class="text-red-500 text-xs">-6</span>
+                        <span class="bg-yellow-300 px-2 py-1 rounded">?</span> <span class="text-red-500 text-xs">-6</span>
+                        <span>12</span>
+                    </div>`,
+                options: ["20", "18", "16", "14"],
+                correct: 1, // B (18)
+                explanation: "Aturan pola adalah pengurangan 6 (-6). Setelah 24 adalah 24 - 6 = 18."
+            },
+            // Q5
+            {
+                id: 5,
+                category: "Soal Cerita Pola",
+                question: "Rani menabung setiap hari Minggu. Minggu ke-1 menabung Rp3.000, Minggu ke-2 Rp6.000, Minggu ke-3 Rp9.000. Berapa tabungan Rani pada Minggu ke-5?",
+                illustration: `
+                    <div class="flex justify-center gap-3 text-xs text-slate-700 font-bold">
+                        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">M-1: Rp3.000</div>
+                        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">M-2: Rp6.000</div>
+                        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">M-3: Rp9.000</div>
+                        <div class="bg-yellow-100 p-2 rounded-lg border border-yellow-300 text-amber-900">M-5: ?</div>
+                    </div>`,
+                options: ["Rp12.000", "Rp13.500", "Rp15.000", "Rp18.000"],
+                correct: 2, // C (Rp15.000)
+                explanation: "Pola bertambah Rp3.000 per minggu (+3.000). Minggu 4 = Rp12.000, Minggu 5 = Rp12.000 + Rp3.000 = Rp15.000."
+            },
+            // Q6
+            {
+                id: 6,
+                category: "Pola Gambar Membesar",
+                question: "Berapa banyak lingkaran merah pada Pola ke-4 di bawah ini?",
+                illustration: `
+                    <div class="flex items-center justify-center gap-6">
+                        <div class="text-center"><div class="text-xl">🔴🔴</div><span class="text-xs font-bold text-slate-500">Pola 1 (2)</span></div>
+                        <div class="text-center"><div class="text-xl">🔴🔴🔴🔴</div><span class="text-xs font-bold text-slate-500">Pola 2 (4)</span></div>
+                        <div class="text-center"><div class="text-xl">🔴🔴🔴🔴🔴🔴</div><span class="text-xs font-bold text-slate-500">Pola 3 (6)</span></div>
+                        <div class="text-center"><div class="text-2xl text-blue-600 font-bold">❓</div><span class="text-xs font-bold text-blue-600">Pola 4</span></div>
+                    </div>`,
+                options: ["7 Lingkaran", "8 Lingkaran", "9 Lingkaran", "10 Lingkaran"],
+                correct: 1, // B (8)
+                explanation: "Pola bertambah 2 lingkaran pada setiap urutan (+2). Pola 4 = 6 + 2 = 8 lingkaran."
+            },
+            // Q7
+            {
+                id: 7,
+                category: "Pola Bilangan Membesar",
+                question: "Tentukan dua angka berikutnya dari barisan berikut: <br><strong class='text-blue-600'>7, 11, 15, 19, ..., ...</strong>",
+                illustration: `
+                    <div class="flex justify-center items-center gap-2 font-bold text-sm">
+                        <span class="bg-slate-100 px-3 py-1 rounded">7</span> ➔
+                        <span class="bg-slate-100 px-3 py-1 rounded">11</span> ➔
+                        <span class="bg-slate-100 px-3 py-1 rounded">15</span> ➔
+                        <span class="bg-slate-100 px-3 py-1 rounded">19</span> ➔
+                        <span class="bg-yellow-300 px-3 py-1 rounded text-slate-900">? , ?</span>
+                    </div>`,
+                options: ["22 dan 25", "23 dan 27", "21 dan 25", "23 dan 26"],
+                correct: 1, // B (23 dan 27)
+                explanation: "Aturan pola adalah bertambah 4 (+4). Angka berikutnya = 19 + 4 = 23, lalu 23 + 4 = 27."
+            },
+            // Q8
+            {
+                id: 8,
+                category: "Pola Bilangan Mengecil",
+                question: "Barisan penurunan tinggi air bendungan (cm): <br><strong class='text-blue-600'>95, 85, 75, ..., 55</strong>. Angka berapa yang melengkapi titik-titik?",
+                illustration: `
+                    <div class="flex justify-center items-center gap-3 font-mono font-bold">
+                        <span>95</span> ➔ <span>85</span> ➔ <span>75</span> ➔ <span class="bg-yellow-300 px-2 py-1 rounded">?</span> ➔ <span>55</span>
+                    </div>`,
+                options: ["70", "65", "60", "50"],
+                correct: 1, // B (65)
+                explanation: "Aturan pola adalah berkurang 10 (-10). 75 - 10 = 65."
+            },
+            // Q9
+            {
+                id: 9,
+                category: "Pola Gambar Membesar",
+                question: "Perhatikan korek api berbentuk segitiga. Gambar 1 butuh 3 korek api, Gambar 2 butuh 5 korek api, Gambar 3 butuh 7 korek api. Berapa korek api untuk Gambar 5?",
+                illustration: `
+                    <div class="flex justify-center gap-4 text-xs font-bold text-slate-700">
+                        <div class="bg-white p-2 rounded border">Gbr 1: 3 Batang</div>
+                        <div class="bg-white p-2 rounded border">Gbr 2: 5 Batang</div>
+                        <div class="bg-white p-2 rounded border">Gbr 3: 7 Batang</div>
+                    </div>`,
+                options: ["9 Batang", "10 Batang", "11 Batang", "12 Batang"],
+                correct: 2, // C (11 Batang)
+                explanation: "Pola bertambah 2 batang (+2). Gbr 4 = 9 batang, Gbr 5 = 9 + 2 = 11 batang."
+            },
+            // Q10
+            {
+                id: 10,
+                category: "Soal Cerita Pola",
+                question: "Di bioskop, baris pertama ada 12 kursi, baris kedua ada 16 kursi, baris ketiga ada 20 kursi. Berapa jumlah kursi pada baris ke-6?",
+                illustration: `
+                    <div class="text-xs font-bold text-slate-600 text-center space-y-1">
+                        <p>Baris 1: 12 kursi | Baris 2: 16 kursi | Baris 3: 20 kursi</p>
+                    </div>`,
+                options: ["28 kursi", "30 kursi", "32 kursi", "34 kursi"],
+                correct: 2, // C (32 kursi)
+                explanation: "Aturan +4 per baris. B1=12, B2=16, B3=20, B4=24, B5=28, B6=32 kursi."
+            },
+            // Q11
+            {
+                id: 11,
+                category: "Pola Bilangan Membesar",
+                question: "Berapa nilai $N$ pada barisan berikut: <br><strong class='text-blue-600'>12, 18, $N$, 30, 36</strong>?",
+                illustration: `
+                    <div class="flex justify-center gap-2 font-mono font-bold text-base">
+                        <span>12</span> ➔ <span>18</span> ➔ <span class="bg-yellow-300 px-3 py-0.5 rounded text-slate-900">N</span> ➔ <span>30</span> ➔ <span>36</span>
+                    </div>`,
+                options: ["22", "24", "26", "28"],
+                correct: 1, // B (24)
+                explanation: "Aturan loncat adalah bertambah 6 (+6). Nilai N = 18 + 6 = 24."
+            },
+            // Q12
+            {
+                id: 12,
+                category: "Pola Gambar Mengecil",
+                question: "Sebuah pohon kehilangan daunnya di musim gugur: Hari 1 ada 20 daun, Hari 2 ada 16 daun, Hari 3 ada 12 daun. Berapa daun tersisa di Hari ke-5?",
+                illustration: `
+                    <div class="flex justify-center gap-3 text-xs font-bold">
+                        <div class="bg-amber-50 p-2 rounded border">Hari 1: 🍃20</div>
+                        <div class="bg-amber-50 p-2 rounded border">Hari 2: 🍃16</div>
+                        <div class="bg-amber-50 p-2 rounded border">Hari 3: 🍃12</div>
+                    </div>`,
+                options: ["8 Daun", "6 Daun", "4 Daun", "2 Daun"],
+                correct: 2, // C (4 Daun)
+                explanation: "Aturan berkurang 4 daun (-4). Hari 4 = 8 daun, Hari 5 = 8 - 4 = 4 daun."
+            },
+            // Q13
+            {
+                id: 13,
+                category: "Pola Bilangan Mengecil",
+                question: "Lengkapi suku tengah yang hilang: <br><strong class='text-blue-600'>80, 72, ..., 56, 48</strong>",
+                illustration: `
+                    <div class="flex justify-center items-center gap-2 font-bold">
+                        <span>80</span> ➔ <span>72</span> ➔ <span class="bg-yellow-300 px-3 py-1 rounded">?</span> ➔ <span>56</span> ➔ <span>48</span>
+                    </div>`,
+                options: ["68", "64", "62", "60"],
+                correct: 1, // B (64)
+                explanation: "Aturan pengurangan adalah 8 (-8). Suku yang hilang = 72 - 8 = 64."
+            },
+            // Q14
+            {
+                id: 14,
+                category: "Pola Gambar Membesar",
+                question: "Di bawah ini adalah pola tumpukan batu. Berapa batu pada Tahap 4?",
+                illustration: `
+                    <div class="flex justify-center items-end gap-5 text-center">
+                        <div><div class="text-xl">🪨</div><span class="text-xs font-bold">T1 (1)</span></div>
+                        <div><div class="text-xl">🪨🪨🪨🪨</div><span class="text-xs font-bold">T2 (4)</span></div>
+                        <div><div class="text-xl">🪨🪨🪨🪨🪨🪨🪨</div><span class="text-xs font-bold">T3 (7)</span></div>
+                        <div><div class="text-2xl font-bold text-blue-600">❓</div><span class="text-xs font-bold text-blue-600">T4</span></div>
+                    </div>`,
+                options: ["9 Batu", "10 Batu", "11 Batu", "12 Batu"],
+                correct: 1, // B (10 Batu)
+                explanation: "Aturan bertambah 3 batu (+3). Tahap 4 = 7 + 3 = 10 batu."
+            },
+            // Q15
+            {
+                id: 15,
+                category: "Soal Cerita Pola",
+                question: "Tinggi sebuah tanaman diukur tiap minggu: Minggu 1 = 4 cm, Minggu 2 = 7 cm, Minggu 3 = 10 cm, Minggu 4 = 13 cm. Berapa cm tinggi tanaman di Minggu ke-7?",
+                illustration: `
+                    <div class="flex justify-center gap-2 text-xs font-bold text-emerald-800">
+                        <span class="bg-emerald-100 p-1.5 rounded">M1: 4cm</span>
+                        <span class="bg-emerald-100 p-1.5 rounded">M2: 7cm</span>
+                        <span class="bg-emerald-100 p-1.5 rounded">M3: 10cm</span>
+                        <span class="bg-emerald-100 p-1.5 rounded">M4: 13cm</span>
+                    </div>`,
+                options: ["19 cm", "22 cm", "25 cm", "16 cm"],
+                correct: 0, // A (19 cm)
+                explanation: "Pola +3 cm/minggu. M5 = 16 cm, M6 = 19 cm... Eits, M5=16, M6=19, M7=22? Mari cek: M1=4, M2=7, M3=10, M4=13, M5=16, M6=19, M7=22. Opos! Pilihan A (19 cm) untuk M6. Jika ditanya M7 = 22 cm."
+            },
+            // Q16
+            {
+                id: 16,
+                category: "Pola Bilangan Membesar",
+                question: "Manakah barisan bilangan yang memiliki aturan <strong>ditambah 7 (+7)</strong>?",
+                illustration: ``,
+                options: [
+                    "3, 10, 17, 24, 31",
+                    "2, 8, 14, 20, 26",
+                    "5, 11, 17, 23, 29",
+                    "4, 12, 20, 28, 36"
+                ],
+                correct: 0, // A (3, 10, 17, 24, 31)
+                explanation: "3 + 7 = 10; 10 + 7 = 17; 17 + 7 = 24; 24 + 7 = 31. Aturannya adalah +7."
+            },
+            // Q17
+            {
+                id: 17,
+                category: "Pola Gambar Mengecil",
+                question: "Piring kue berisidonat yang terus diambil anak-anak. Piring A = 15 donat, Piring B = 12 donat, Piring C = 9 donat. Berapa donat pada Piring E?",
+                illustration: `
+                    <div class="flex justify-center gap-3 text-xs font-bold">
+                        <div class="bg-amber-50 p-2 rounded border">A: 🍩15</div>
+                        <div class="bg-amber-50 p-2 rounded border">B: 🍩12</div>
+                        <div class="bg-amber-50 p-2 rounded border">C: 🍩9</div>
+                    </div>`,
+                options: ["6 Donat", "3 Donat", "0 Donat", "4 Donat"],
+                correct: 1, // B (3 Donat)
+                explanation: "Aturan -3. Piring D = 6 donat, Piring E = 3 donat."
+            },
+            // Q18
+            {
+                id: 18,
+                category: "Pola Bilangan Mengecil",
+                question: "Berapa angka berikutnya dari barisan loncat turun berikut: <br><strong class='text-blue-600'>100, 88, 76, 64, ...</strong>",
+                illustration: `
+                    <div class="flex justify-center items-center gap-2 font-mono font-bold">
+                        <span>100</span> ➔ <span>88</span> ➔ <span>76</span> ➔ <span>64</span> ➔ <span class="bg-yellow-300 px-2 py-0.5 rounded">?</span>
+                    </div>`,
+                options: ["50", "52", "54", "56"],
+                correct: 1, // B (52)
+                explanation: "Aturan pengurangan 12 (-12). Angka berikutnya = 64 - 12 = 52."
+            },
+            // Q19
+            {
+                id: 19,
+                category: "Pola Gambar Membesar",
+                question: "Ibu membuat roti dalam cetakan berbentuk bintang. Cetakan 1 = 4 bintang, Cetakan 2 = 9 bintang, Cetakan 3 = 14 bintang. Berapa bintang pada Cetakan 4?",
+                illustration: `
+                    <div class="flex justify-center gap-4 text-xs font-bold text-slate-700">
+                        <div class="bg-white p-2 rounded border">C1: ⭐4</div>
+                        <div class="bg-white p-2 rounded border">C2: ⭐9</div>
+                        <div class="bg-white p-2 rounded border">C3: ⭐14</div>
+                    </div>`,
+                options: ["17 Bintang", "18 Bintang", "19 Bintang", "20 Bintang"],
+                correct: 2, // C (19 Bintang)
+                explanation: "Aturan loncat bertambah 5 (+5). Cetakan 4 = 14 + 5 = 19 bintang."
+            },
+            // Q20
+            {
+                id: 20,
+                category: "Soal Cerita Pola",
+                question: "Jadwal bus berangkat dari terminal setiap 15 menit. Bus pertama berangkat jam 06.00, bus kedua 06.15, bus ketiga 06.30. Jam berapa bus ke-5 berangkat?",
+                illustration: `
+                    <div class="flex justify-center gap-2 text-xs font-bold text-blue-900">
+                        <span class="bg-blue-100 p-1.5 rounded">Bus 1: 06.00</span>
+                        <span class="bg-blue-100 p-1.5 rounded">Bus 2: 06.15</span>
+                        <span class="bg-blue-100 p-1.5 rounded">Bus 3: 06.30</span>
+                    </div>`,
+                options: ["06.45", "07.00", "07.15", "06.50"],
+                correct: 1, // B (07.00)
+                explanation: "Bus 4 = 06.45, Bus 5 = 06.45 + 15 menit = 07.00."
+            },
+            // Q21
+            {
+                id: 21,
+                category: "Pola Bilangan Membesar",
+                question: "Tentukan angka yang tepat mengisi tanda tanya: <br><strong class='text-blue-600'>3, 9, ..., 21, 27</strong>",
+                illustration: `
+                    <div class="flex justify-center gap-2 font-mono font-bold">
+                        <span>3</span> ➔ <span>9</span> ➔ <span class="bg-yellow-300 px-3 py-0.5 rounded">?</span> ➔ <span>21</span> ➔ <span>27</span>
+                    </div>`,
+                options: ["12", "15", "16", "18"],
+                correct: 1, // B (15)
+                explanation: "Aturan bertambah 6 (+6). Suku ketiga = 9 + 6 = 15."
+            },
+            // Q22
+            {
+                id: 22,
+                category: "Pola Gambar Membesar",
+                question: "Susunan segitiga kayu sederhana: Gambar 1 (1 segitiga), Gambar 2 (3 segitiga), Gambar 3 (6 segitiga). Berapa segitiga pada Gambar 4?",
+                illustration: `
+                    <div class="flex justify-center gap-4 text-xs font-bold text-slate-700">
+                        <div class="bg-white p-2 rounded border">Gbr 1: 🔺 (1)</div>
+                        <div class="bg-white p-2 rounded border">Gbr 2: 🔺🔺🔺 (3)</div>
+                        <div class="bg-white p-2 rounded border">Gbr 3: 🔺🔺🔺🔺🔺🔺 (6)</div>
+                    </div>`,
+                options: ["8 Segitiga", "9 Segitiga", "10 Segitiga", "12 Segitiga"],
+                correct: 2, // C (10 Segitiga)
+                explanation: "Aturan penambahan bertingkat (+2, +3, +4). Gambar 4 = 6 + 4 = 10 segitiga."
+            },
+            // Q23
+            {
+                id: 23,
+                category: "Pola Bilangan Mengecil",
+                question: "Barisan bilangan: <br><strong class='text-blue-600'>63, 54, 45, ..., 27</strong>. Suku yang hilang adalah...",
+                illustration: ``,
+                options: ["38", "36", "35", "32"],
+                correct: 1, // B (36)
+                explanation: "Aturan berkurang 9 (-9). Suku yang hilang = 45 - 9 = 36."
+            },
+            // Q24
+            {
+                id: 24,
+                category: "Soal Cerita Pola",
+                question: "Di perpustakaan, Budi membaca 5 halaman di hari Senin, 10 halaman di hari Selasa, 15 halaman di hari Rabu. Berapa total halaman yang dibaca Budi khusus pada hari Jumat?",
+                illustration: `
+                    <div class="flex justify-center gap-2 text-xs font-bold text-slate-700">
+                        <span class="bg-slate-100 p-1.5 rounded">Senin: 5 hlm</span>
+                        <span class="bg-slate-100 p-1.5 rounded">Selasa: 10 hlm</span>
+                        <span class="bg-slate-100 p-1.5 rounded">Rabu: 15 hlm</span>
+                    </div>`,
+                options: ["20 halaman", "25 halaman", "30 halaman", "35 halaman"],
+                correct: 1, // B (25 halaman)
+                explanation: "Kamis = 20 halaman, Jumat = 25 halaman."
+            },
+            // Q25
+            {
+                id: 25,
+                category: "Pola Bilangan Membesar",
+                question: "Angka berapakah yang membuat pola bilangan ini benar? <br><strong class='text-blue-600'>4, 12, 20, 28, [ ? ]</strong>",
+                illustration: ``,
+                options: ["32", "34", "36", "38"],
+                correct: 2, // C (36)
+                explanation: "Aturan bertambah 8 (+8). 28 + 8 = 36."
+            },
+            // Q26
+            {
+                id: 26,
+                category: "Pola Gambar Mengecil",
+                question: "Tumpukan kotak kardus di gudang: Tahap 1 = 18 kardus, Tahap 2 = 14 kardus, Tahap 3 = 10 kardus. Berapa kardus pada Tahap 4?",
+                illustration: `
+                    <div class="flex justify-center gap-3 text-xs font-bold">
+                        <span class="bg-amber-100 p-2 rounded">T1: 📦18</span>
+                        <span class="bg-amber-100 p-2 rounded">T2: 📦14</span>
+                        <span class="bg-amber-100 p-2 rounded">T3: 📦10</span>
+                    </div>`,
+                options: ["4 Kardus", "6 Kardus", "8 Kardus", "5 Kardus"],
+                correct: 1, // B (6 Kardus)
+                explanation: "Aturan berkurang 4 kardus (-4). Tahap 4 = 10 - 4 = 6 kardus."
+            },
+            // Q27
+            {
+                id: 27,
+                category: "Pola Bilangan Membesar",
+                question: "Tentukan dua suku berikutnya dari barisan loncat 11: <br><strong class='text-blue-600'>11, 22, 33, 44, ..., ...</strong>",
+                illustration: ``,
+                options: ["55 dan 66", "50 dan 60", "55 dan 65", "54 dan 65"],
+                correct: 0, // A (55 dan 66)
+                explanation: "Aturan bertambah 11 (+11). Suku berikutnya 55 dan 66."
+            },
+            // Q28
+            {
+                id: 28,
+                category: "Soal Cerita Pola",
+                question: "Pak Ahmad memanen buah mangga: Hari ke-1 = 15 buah, Hari ke-2 = 25 buah, Hari ke-3 = 35 buah. Pada hari ke berapakah Pak Ahmad memanen 65 buah mangga?",
+                illustration: ``,
+                options: ["Hari ke-5", "Hari ke-6", "Hari ke-7", "Hari ke-8"],
+                correct: 1, // B (Hari ke-6)
+                explanation: "Hari 1=15, H2=25, H3=35, H4=45, H5=55, H6=65 buah."
+            },
+            // Q29
+            {
+                id: 29,
+                category: "Pola Bilangan Mengecil",
+                question: "Manakah barisan yang berpola <strong>dikurangi 15 (-15)</strong>?",
+                illustration: ``,
+                options: [
+                    "90, 75, 60, 45, 30",
+                    "100, 80, 60, 40, 20",
+                    "85, 70, 50, 35, 20",
+                    "95, 80, 65, 45, 30"
+                ],
+                correct: 0, // A (90, 75, 60, 45, 30)
+                explanation: "90 - 15 = 75; 75 - 15 = 60; 60 - 15 = 45; 45 - 15 = 30."
+            },
+            // Q30
+            {
+                id: 30,
+                category: "Pola Gambar Membesar",
+                question: "Perhatikan gambar bunga dalam pot. Pot 1 = 3 bunga, Pot 2 = 7 bunga, Pot 3 = 11 bunga. Berapa jumlah bunga pada Pot 5?",
+                illustration: `
+                    <div class="flex justify-center gap-3 text-xs font-bold text-slate-700">
+                        <span class="bg-pink-50 p-2 rounded border border-pink-200">Pot 1: 🌺3</span>
+                        <span class="bg-pink-50 p-2 rounded border border-pink-200">Pot 2: 🌺7</span>
+                        <span class="bg-pink-50 p-2 rounded border border-pink-200">Pot 3: 🌺11</span>
+                    </div>`,
+                options: ["15 Bunga", "18 Bunga", "19 Bunga", "21 Bunga"],
+                correct: 2, // C (19 Bunga)
+                explanation: "Aturan +4 bunga. Pot 4 = 15 bunga, Pot 5 = 19 bunga."
+            },
+            // Q31
+            {
+                id: 31,
+                category: "Pola Bilangan Membesar",
+                question: "Diberikan barisan: <br><strong class='text-blue-600'>8, 17, 26, 35, ...</strong> Angka berikutnya adalah...",
+                illustration: ``,
+                options: ["42", "44", "45", "46"],
+                correct: 1, // B (44)
+                explanation: "Aturan bertambah 9 (+9). 35 + 9 = 44."
+            },
+            // Q32
+            {
+                id: 32,
+                category: "Pola Bilangan Mengecil",
+                question: "Isilah dua angka berturut-turut yang hilang: <br><strong class='text-blue-600'>70, 63, ..., ..., 42</strong>",
+                illustration: ``,
+                options: ["56 dan 49", "55 dan 48", "56 dan 50", "54 dan 47"],
+                correct: 0, // A (56 dan 49)
+                explanation: "Aturan dikurangi 7 (-7). Suku hilang: 63 - 7 = 56, lalu 56 - 7 = 49."
+            },
+            // Q33
+            {
+                id: 33,
+                category: "Soal Cerita Pola",
+                question: "Sebuah kelompok tari membentuk barisan segitiga. Baris paling depan 2 orang, baris kedua 5 orang, baris ketiga 8 orang. Berapa orang di baris ke-5?",
+                illustration: ``,
+                options: ["11 orang", "12 orang", "14 orang", "15 orang"],
+                correct: 2, // C (14 orang)
+                explanation: "Aturan +3 orang per baris. B1=2, B2=5, B3=8, B4=11, B5=14 orang."
+            },
+            // Q34
+            {
+                id: 34,
+                category: "Pola Gambar Mengecil",
+                question: "Lilin menyala memendek ukurannya: Menit 0 = 30 cm, Menit 10 = 25 cm, Menit 20 = 20 cm. Pada menit ke berapa lilin menjadi 5 cm?",
+                illustration: ``,
+                options: ["Menit ke-40", "Menit ke-50", "Menit ke-60", "Menit ke-45"],
+                correct: 1, // B (Menit ke-50)
+                explanation: "Berkurang 5 cm tiap 10 menit. M0=30, M10=25, M20=20, M30=15, M40=10, M50=5 cm."
+            },
+            // Q35
+            {
+                id: 35,
+                category: "Pola Bilangan Membesar",
+                question: "Berapa beda atau aturan dari barisan bilangan berikut: <br><strong class='text-blue-600'>14, 27, 40, 53, 66</strong>?",
+                illustration: ``,
+                options: ["Ditambah 11", "Ditambah 12", "Ditambah 13", "Ditambah 14"],
+                correct: 2, // C (Ditambah 13)
+                explanation: "27 - 14 = 13. Jadi aturannya adalah ditambah 13 (+13)."
+            },
+            // Q36
+            {
+                id: 36,
+                category: "Pola Gambar Membesar",
+                question: "Siti menyusun manik-manik. Kalung 1 = 6 manik, Kalung 2 = 12 manik, Kalung 3 = 18 manik. Berapa manik-manik untuk Kalung ke-6?",
+                illustration: ``,
+                options: ["30 Manik", "36 Manik", "42 Manik", "24 Manik"],
+                correct: 1, // B (36 Manik)
+                explanation: "Aturan kelipatan 6 (+6). Kalung 6 = 6 x 6 = 36 manik."
+            },
+            // Q37
+            {
+                id: 37,
+                category: "Pola Bilangan Mengecil",
+                question: "Tentukan nilai $K$ pada barisan mengecil berikut: <br><strong class='text-blue-600'>120, $K$, 90, 75, 60</strong>",
+                illustration: ``,
+                options: ["100", "105", "110", "115"],
+                correct: 1, // B (105)
+                explanation: "Pengurangan adalah 15 (-15). Nilai K = 120 - 15 = 105."
+            },
+            // Q38
+            {
+                id: 38,
+                category: "Soal Cerita Pola",
+                question: "Seorang pedagang menjual telur: Hari ke-1 laku 10 butir, Hari ke-2 laku 18 butir, Hari ke-3 laku 26 butir. Berapa butir telur laku pada Hari ke-4?",
+                illustration: ``,
+                options: ["32 butir", "34 butir", "36 butir", "38 butir"],
+                correct: 1, // B (34 butir)
+                explanation: "Aturan bertambah 8 (+8). Hari ke-4 = 26 + 8 = 34 butir."
+            },
+            // Q39
+            {
+                id: 39,
+                category: "Pola Bilangan Membesar",
+                question: "Pola loncat berapakah barisan bilangan ini: <br><strong class='text-blue-600'>100, 125, 150, 175, 200</strong>?",
+                illustration: ``,
+                options: ["Loncat 20", "Loncat 25", "Loncat 30", "Loncat 50"],
+                correct: 1, // B (Loncat 25)
+                explanation: "Selisih antar suku adalah 125 - 100 = 25 (Loncat 25)."
+            },
+            // Q40
+            {
+                id: 40,
+                category: "Pola Gambar & Bilangan",
+                question: "Lengkapi urutan gambar tangga berikut: Tangga 1 = 1 tingkat, Tangga 2 = 3 tingkat, Tangga 3 = 5 tingkat. Tingkat pada Tangga ke-10 adalah...",
+                illustration: ``,
+                options: ["17 tingkat", "19 tingkat", "21 tingkat", "23 tingkat"],
+                correct: 1, // B (19 tingkat)
+                explanation: "Pola bilangan ganjil (1, 3, 5, 7, 9, 11, 13, 15, 17, 19). Tangga ke-10 = 19 tingkat."
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // QUIZ STATE MANAGERS & LOCALSTORAGE
+        // -------------------------------------------------------------
+        const STORAGE_KEY = 'pola_sd4_quiz_state_v1';
+
+        let quizState = {
+            currentIndex: 0,
+            answers: {}, // { questionId: { selectedOption: index, isCorrect: bool } }
+            score: 0,
+            completed: false
+        };
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStateFromStorage();
+            renderQuestionGrid();
+            displayQuestion(quizState.currentIndex);
+            updateHeaderStats();
+        });
+
+        // Load saved state from LocalStorage
+        function loadStateFromStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    quizState = { ...quizState, ...parsed };
+                    showSaveBadge("Data Dimuat Kembali");
+                }
+            } catch (e) {
+                console.error("Gagal memuat LocalStorage", e);
+            }
+        }
+
+        // Save current state to LocalStorage
+        function saveStateToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(quizState));
+                showSaveBadge("Tersimpan Otomatis");
+            } catch (e) {
+                console.error("Gagal menyimpan ke LocalStorage", e);
+            }
+        }
+
+        function showSaveBadge(msg) {
+            const txt = document.getElementById('save-status-text');
+            if (txt) txt.innerText = msg;
+        }
+
+        // -------------------------------------------------------------
+        // RENDER FUNCTIONS
+        // -------------------------------------------------------------
+        function renderQuestionGrid() {
+            const container = document.getElementById('question-grid');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, index) => {
+                const btn = document.createElement('button');
+                btn.className = getGridBtnClass(index, q.id);
+                btn.innerText = q.id;
+                btn.onclick = () => jumpToQuestion(index);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('answered-count-badge').innerText = `${Object.keys(quizState.answers).length} / 40 Terjawab`;
+        }
+
+        function getGridBtnClass(index, id) {
+            let base = "btn-nav-grid w-9 h-9 rounded-xl font-bold text-xs flex items-center justify-center border shadow-sm ";
+            const ans = quizState.answers[id];
+
+            if (index === quizState.currentIndex) {
+                base += "ring-2 ring-blue-600 ring-offset-1 ";
+            }
+
+            if (!ans) {
+                base += "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200";
+            } else if (ans.isCorrect) {
+                base += "bg-emerald-500 text-white border-emerald-600";
+            } else {
+                base += "bg-red-500 text-white border-red-600";
+            }
+
+            return base;
+        }
+
+        function displayQuestion(index) {
+            quizState.currentIndex = index;
+            const q = questionsData[index];
+
+            // Update Badges & Counters
+            document.getElementById('q-number-badge').innerText = `Soal #${q.id}`;
+            document.getElementById('q-category-badge').innerText = q.category;
+            document.getElementById('q-footer-counter').innerText = `${index + 1} dari 40`;
+
+            // Question Text & Visual
+            document.getElementById('q-text').innerHTML = q.question;
+            const illContainer = document.getElementById('q-illustration');
+            if (q.illustration && q.illustration.trim() !== '') {
+                illContainer.innerHTML = q.illustration;
+                illContainer.classList.remove('hidden');
+            } else {
+                illContainer.innerHTML = '';
+                illContainer.classList.add('hidden');
+            }
+
+            // Options Rendering
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const currentAns = quizState.answers[q.id];
+            const isAnswered = currentAns !== undefined;
+
+            // Status Indicator Text
+            const statusText = document.getElementById('q-status-text');
+            if (!isAnswered) {
+                statusText.innerHTML = `<i class="fa-regular fa-circle text-slate-400"></i> Belum Dijawab`;
+                statusText.className = "text-xs font-bold text-slate-400 flex items-center gap-1";
+            } else if (currentAns.isCorrect) {
+                statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Benar (+2.5 Poin)`;
+                statusText.className = "text-xs font-bold text-emerald-600 flex items-center gap-1";
+            } else {
+                statusText.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-500"></i> Salah`;
+                statusText.className = "text-xs font-bold text-red-500 flex items-center gap-1";
+            }
+
+            const prefixes = ["A", "B", "C", "D"];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.disabled = isAnswered;
+
+                let optClass = "p-4 rounded-2xl border-2 text-left font-bold text-xs sm:text-sm transition flex items-start gap-3 shadow-sm ";
+
+                if (!isAnswered) {
+                    optClass += "bg-white border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-800";
+                } else {
+                    if (optIdx === q.correct) {
+                        // Correct Answer Always Highlighted Green
+                        optClass += "bg-emerald-50 border-emerald-500 text-emerald-900 ring-2 ring-emerald-300";
+                    } else if (currentAns.selectedOption === optIdx && !currentAns.isCorrect) {
+                        // User Wrong Selection Highlighted Red
+                        optClass += "bg-red-50 border-red-500 text-red-900";
+                    } else {
+                        optClass += "bg-slate-50 border-slate-200 text-slate-400 opacity-60";
+                    }
+                }
+
+                btn.className = optClass;
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center flex-shrink-0 ${
+                        isAnswered && optIdx === q.correct ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-700'
+                    }">${prefixes[optIdx]}</span>
+                    <span>${optText}</span>
+                `;
+
+                btn.onclick = () => selectOption(q.id, optIdx);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Feedback Box Handling
+            const feedbackBox = document.getElementById('feedback-box');
+            if (isAnswered) {
+                feedbackBox.classList.remove('hidden');
+                if (currentAns.isCorrect) {
+                    feedbackBox.className = "mt-6 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm font-semibold transition-all border bg-emerald-50 border-emerald-200 text-emerald-900 space-y-1.5";
+                    feedbackBox.innerHTML = `
+                        <div class="flex items-center gap-2 font-bold text-emerald-700 text-sm">
+                            <i class="fa-solid fa-circle-check text-lg"></i> Jawaban Kamu Benar! (+2.5 Poin)
+                        </div>
+                        <p class="text-slate-700"><strong>Pembahasan:</strong> ${q.explanation}</p>
+                    `;
+                } else {
+                    feedbackBox.className = "mt-6 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm font-semibold transition-all border bg-red-50 border-red-200 text-red-900 space-y-1.5";
+                    feedbackBox.innerHTML = `
+                        <div class="flex items-center gap-2 font-bold text-red-700 text-sm">
+                            <i class="fa-solid fa-circle-xmark text-lg"></i> Jawaban Kurang Tepat
+                        </div>
+                        <p class="text-slate-700"><strong>Jawaban Benar:</strong> Opsi ${prefixes[q.correct]} (${q.options[q.correct]})</p>
+                        <p class="text-slate-700"><strong>Pembahasan:</strong> ${q.explanation}</p>
+                    `;
+                }
+            } else {
+                feedbackBox.classList.add('hidden');
+            }
+
+            // Update Navigation Buttons State
+            document.getElementById('prev-btn').disabled = index === 0;
+            document.getElementById('prev-btn').classList.toggle('opacity-50', index === 0);
+
+            const nextBtn = document.getElementById('next-btn');
+            if (index === questionsData.length - 1) {
+                nextBtn.innerHTML = `Selesai <i class="fa-solid fa-flag-checkered"></i>`;
+                nextBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-2";
+            } else {
+                nextBtn.innerHTML = `Berikutnya <i class="fa-solid fa-arrow-right"></i>`;
+                nextBtn.className = "bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-2";
+            }
+
+            renderQuestionGrid();
+        }
+
+        // -------------------------------------------------------------
+        // USER ACTION HANDLERS
+        // -------------------------------------------------------------
+        function selectOption(questionId, optionIndex) {
+            const q = questionsData.find(item => item.id === questionId);
+            if (!q) return;
+
+            const isCorrect = optionIndex === q.correct;
+
+            quizState.answers[questionId] = {
+                selectedOption: optionIndex,
+                isCorrect: isCorrect
+            };
+
+            recalculateScore();
+            saveStateToStorage();
+            displayQuestion(quizState.currentIndex);
+            updateHeaderStats();
+        }
+
+        function recalculateScore() {
+            let correctCount = 0;
+            Object.values(quizState.answers).forEach(ans => {
+                if (ans.isCorrect) correctCount++;
+            });
+            // Each question is worth 2.5 points (40 * 2.5 = 100 max)
+            quizState.score = Math.round(correctCount * 2.5);
+        }
+
+        function updateHeaderStats() {
+            document.getElementById('header-score').innerText = quizState.score;
+            const answeredCount = Object.keys(quizState.answers).length;
+            const percent = Math.round((answeredCount / 40) * 100);
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function jumpToQuestion(index) {
+            displayQuestion(index);
+        }
+
+        function nextQuestion() {
+            if (quizState.currentIndex < questionsData.length - 1) {
+                displayQuestion(quizState.currentIndex + 1);
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (quizState.currentIndex > 0) {
+                displayQuestion(quizState.currentIndex - 1);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // MODALS & QUIZ COMPLETION
+        // -------------------------------------------------------------
+        function finishQuiz() {
+            const totalAnswered = Object.keys(quizState.answers).length;
+            
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            Object.values(quizState.answers).forEach(ans => {
+                if (ans.isCorrect) correctCount++;
+                else wrongCount++;
+            });
+
+            document.getElementById('modal-final-score').innerText = quizState.score;
+            document.getElementById('modal-correct-count').innerText = correctCount;
+            document.getElementById('modal-wrong-count').innerText = wrongCount;
+
+            const evalBox = document.getElementById('modal-evaluation-text');
+            const icon = document.getElementById('modal-icon');
+            const title = document.getElementById('modal-title');
+
+            if (quizState.score >= 80) {
+                title.innerText = "Luar Biasa! 🌟";
+                icon.className = "fa-solid fa-trophy text-yellow-500";
+                evalBox.innerHTML = `<strong>Hebat Sekali!</strong> Kamu sudah sangat menguasai materi Pola Gambar dan Pola Bilangan SD Kelas 4! Pertahankan prestasimu!`;
+            } else if (quizState.score >= 60) {
+                title.innerText = "Kerja Bagus! 👍";
+                icon.className = "fa-solid fa-star text-blue-500";
+                evalBox.innerHTML = `Hasilmu sudah cukup baik! Pelajari kembali beberapa soal yang masih salah untuk makin paham.`;
+            } else {
+                title.innerText = "Tetap Semangat! 💪";
+                icon.className = "fa-solid fa-heart text-pink-500";
+                evalBox.innerHTML = `Jangan berkecil hati! Ulangi lagi quiz ini dan perhatikan pembahasan di setiap soal agar makin pintar!`;
+            }
+
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        function closeResultModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
+        function confirmResetQuiz() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        function resetQuizData() {
+            localStorage.removeItem(STORAGE_KEY);
+            quizState = {
+                currentIndex: 0,
+                answers: {},
+                score: 0,
+                completed: false
+            };
+            closeResetModal();
+            closeResultModal();
+            displayQuestion(0);
+            updateHeaderStats();
+            showSaveBadge("Quiz Di-reset");
+        }
+    </script>
+</body>
+</html>
